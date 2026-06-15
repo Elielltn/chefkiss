@@ -21,7 +21,7 @@ function FormField({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="bg-red-50 border border-orange-900 rounded-lg px-3 py-3 outline-none"
+        className="bg-red-50 border-2 border-[#593700] rounded-lg px-3 py-3 outline-none"
       />
     </div>
   );

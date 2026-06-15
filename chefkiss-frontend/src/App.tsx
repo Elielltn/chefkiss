@@ -1,10 +1,10 @@
-import LoginPage from "./pages/LoginPage";
+import RecipesPage from "./pages/RecipesPage";
 
 function App() {
   return (
-    <>
-      <LoginPage></LoginPage>
-    </>
+    <div className="bg-[#A97D47] py-[20px]">
+      <RecipesPage></RecipesPage>
+    </div>
   );
 }
 

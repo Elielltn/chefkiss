@@ -6,7 +6,7 @@ function LoginCard() {
   const [password, setPassword] = useState("");
 
   return (
-    <form className="text-orange-900 bg-orange-200 w-[420px] border border-orange-900 rounded-xl px-[36px] py-[40px]">
+    <form className="text-[#4B2E2B] bg-[#D4A46B] w-[420px] border-2 border-[#593700] rounded-xl px-[36px] py-[40px]">
       <div className="mb-[20px]">
         <FormField
           label="Email"
@@ -26,7 +26,7 @@ function LoginCard() {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <button className="transition text-orange-50 hover:text-orange-900 bg-orange-900 hover:bg-orange-50 rounded-lg w-full py-3 cursor-pointer font-medium">
+      <button className="transition text-orange-50 bg-[#593700] hover:bg-[#503200] rounded-lg w-full py-3 cursor-pointer font-medium">
         Entrar
       </button>
     </form>

@@ -4,7 +4,7 @@ type logoProps = {
 
 function Logo({ fontSize }: logoProps) {
   return (
-    <h1 style={{ fontSize: `${fontSize}px` }} className="logo text-orange-900 mb-[24px]">
+    <h1 style={{ fontSize: `${fontSize}px` }} className="logo text-[#593700]">
       ChefKiss
     </h1>
   );
