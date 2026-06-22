@@ -97,6 +97,7 @@ function AddRecipeModal({ onClose }: addRecipeModalProps) {
                 <CategoryBtn
                   key={cat}
                   label={cat}
+                  catsArr={recipeCats}
                   active={recipeCats.includes(cat)}
                   onClick={() => toggleCategory(cat)}
                 />
