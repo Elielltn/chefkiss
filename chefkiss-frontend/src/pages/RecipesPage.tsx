@@ -1,6 +1,8 @@
+import { useState } from "react";
 import Header from "../components/Header";
 import InputArea from "../components/InputArea";
 import RecipesGrid from "../components/RecipesGrid";
+import AddRecipeModal from "../components/AddRecipeModal";
 
 const recipes = [
   {
@@ -46,12 +48,17 @@ const recipes = [
 ];
 
 function RecipesPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
-    <div className="min-h-screen max-w-[1440px] w-full mx-auto flex flex-col">
-      <Header></Header>
-      <InputArea></InputArea>
-      <RecipesGrid recipes={recipes}></RecipesGrid>
-    </div>
+    <>
+      <div className="min-h-screen max-w-[1440px] w-full mx-auto flex flex-col py-[20px] z-0">
+        <Header></Header>
+        <InputArea onOpenModal={() => setIsModalOpen(true)}></InputArea>
+        <RecipesGrid recipes={recipes}></RecipesGrid>
+      </div>
+      {isModalOpen && <AddRecipeModal onClose={() => setIsModalOpen(false)} />}
+    </>
   );
 }
 
