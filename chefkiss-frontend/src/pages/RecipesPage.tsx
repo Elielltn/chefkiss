@@ -52,7 +52,7 @@ function RecipesPage() {
 
   return (
     <>
-      <div className="min-h-screen max-w-[1440px] w-full mx-auto flex flex-col py-[20px] z-0">
+      <div className="max-w-[1440px] w-full mx-auto flex flex-col py-[20px] z-0">
         <Header></Header>
         <InputArea onOpenModal={() => setIsModalOpen(true)}></InputArea>
         <RecipesGrid recipes={recipes}></RecipesGrid>

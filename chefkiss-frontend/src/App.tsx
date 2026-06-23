@@ -1,9 +1,9 @@
-import RecipesPage from "./pages/RecipesPage";
+import RecipeDetailsPage from "./pages/RecipeDetailsPage";
 
 function App() {
   return (
-    <div className="bg-[#A97D47]">
-      <RecipesPage></RecipesPage>
+    <div className="min-h-screen bg-[#A97D47]">
+      <RecipeDetailsPage></RecipeDetailsPage>
     </div>
   );
 }

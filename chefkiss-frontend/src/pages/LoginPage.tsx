@@ -3,7 +3,7 @@ import Logo from "../components/Logo";
 
 function LoginPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       <Logo fontSize={42} />
       <LoginCard />
     </div>
