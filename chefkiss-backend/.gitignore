@@ -1,0 +1,14 @@
+node_modules
+.env
+/generated/prisma
+
+# build do TypeScript
+dist/
+build/
+
+# logs
+*.log
+
+# arquivos de sistema/editor
+.DS_Store
+.vscode/
