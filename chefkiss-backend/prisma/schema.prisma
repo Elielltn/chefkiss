@@ -12,3 +12,29 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id       String   @id @default(uuid())
+  email    String   @unique
+  password String
+  recipes  Recipe[]
+}
+model Recipe {
+  id          String             @id @default(uuid())
+  name        String
+  categories  String[]
+  authorId    String
+  ingredients RecipeIngredient[]
+  steps       String[]
+  tips        String[]
+  author      User               @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model RecipeIngredient {
+  id       String @id @default(uuid())
+  name     String
+  quantity String
+  unit     String
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}
