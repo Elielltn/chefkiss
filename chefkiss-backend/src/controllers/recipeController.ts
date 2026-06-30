@@ -1,8 +1,10 @@
 import type { Response } from "express";
 import type { AuthRequest } from "../middlewares/authMiddleware.js";
 import prisma from "../lib/prisma.js";
-import { createRecipeSchema } from "../schemas/recipeSchemas.js";
-import { error } from "node:console";
+import {
+  createRecipeSchema,
+  listRecipeSchema,
+} from "../schemas/recipeSchemas.js";
 
 export async function createRecipe(req: AuthRequest, res: Response) {
   const result = createRecipeSchema.safeParse(req.body);
@@ -30,4 +32,40 @@ export async function createRecipe(req: AuthRequest, res: Response) {
   });
 
   return res.status(201).json(recipe);
+}
+
+export async function listRecipes(req: AuthRequest, res: Response) {
+  const result = listRecipeSchema.safeParse(req.query);
+
+  if (!result.success) {
+    return res.status(400).json({ error: result.error.issues });
+  }
+
+  const { page, limit, search, category } = result.data;
+
+  const where = {
+    authorId: req.userId as string,
+    ...(search && { name: { contains: search, mode: "insensitive" as const } }),
+    ...(category && { categories: { has: category } }),
+  };
+
+  const [recipes, total] = await Promise.all([
+    prisma.recipe.findMany({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { name: "asc" },
+    }),
+    prisma.recipe.count({ where }),
+  ]);
+
+  res.status(200).json({
+    data: recipes,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  });
 }
