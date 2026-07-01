@@ -20,3 +20,7 @@ export const listRecipeSchema = z.object({
   search: z.string().optional(),
   category: z.string().optional(),
 });
+
+export const recipeIdSchema = z.object({
+  id: z.uuid(),
+});
