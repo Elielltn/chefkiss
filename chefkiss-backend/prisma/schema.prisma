@@ -14,11 +14,14 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(uuid())
-  email    String   @unique
-  password String
-  recipes  Recipe[]
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  recipes   Recipe[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 }
+
 model Recipe {
   id          String             @id @default(uuid())
   name        String
@@ -28,6 +31,8 @@ model Recipe {
   steps       String[]
   tips        String[]
   author      User               @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
 }
 
 model RecipeIngredient {
