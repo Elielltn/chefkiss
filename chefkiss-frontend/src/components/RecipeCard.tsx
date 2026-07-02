@@ -1,15 +1,33 @@
+import { useNavigate } from "react-router";
+
 type recipeCardProps = {
   name: string;
   tags: string[];
 };
 
 function RecipeCard({ name, tags }: recipeCardProps) {
+  const navigate = useNavigate();
+
   return (
-    <div className="bg-[#FFCC91] h-[240px] w-full border-2 border-[#593700] rounded-xl overflow-hidden">
-      <div className="bg-[#593700] h-[180px] w-full"></div>
-      <div className="h-[60px] w-full px-3 py-2 flex flex-col justify-center text-[#593700]">
-        <h2 className="text-[15px] font-semibold leading-tight">{name}</h2>
-        <span className="text-[12px] font-light">{`${tags[0]} • ${tags[1]}`}</span>
+    <div
+      onClick={() => navigate("/recipe")}
+      className="group overflow-hidden rounded-xl border border-border bg-card shadow-soft transition-all hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-elevated focus-visible:focus-ring"
+    >
+      <div
+        className="aspect-[16/10] w-full"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.32 0.05 45) 0%, oklch(0.22 0.04 45) 55%, oklch(0.18 0.03 45) 100%)",
+        }}
+        aria-hidden
+      />
+      <div className="border-t border-border bg-surface p-4">
+        <h3 className="font-display text-lg font-semibold leading-tight text-foreground transition-colors group-hover:text-primary">
+          {name}
+        </h3>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {tags.slice(0, 2).join(" • ")}
+        </p>
       </div>
     </div>
   );

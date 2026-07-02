@@ -1,10 +1,32 @@
 import Logo from "./Logo";
+import { ChefHat, LogOut } from "lucide-react";
+import { useNavigate } from "react-router";
 
 function Header() {
+  const navigate = useNavigate();
+
   return (
-    <header className="flex items-center justify-between mb-[48px]">
-      <Logo fontSize={64}/>
-      <button className="transition text-[#593700] hover:text-[#FFCC91] border-2 border-[#593700] rounded-lg hover:bg-[#593700] px-[30px] py-[15px]">Sair</button>
+    <header className="flex items-start justify-between gap-4">
+      <div className="flex items-center gap-3">
+        <span className="grid size-11 place-items-center rounded-xl bg-primary text-primary-foreground shadow-soft">
+          <ChefHat className="size-6" strokeWidth={1.75} />
+        </span>
+        <div>
+          <Logo fontSize={48} />
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Seu caderno pessoal de receitas
+          </p>
+        </div>
+      </div>
+      <button
+        onClick={() => {
+          navigate("/auth");
+        }}
+        className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground shadow-soft transition-colors hover:bg-secondary hover:border-border-strong focus-visible:focus-ring"
+      >
+        <LogOut className="size-4" />
+        Sair
+      </button>
     </header>
   );
 }

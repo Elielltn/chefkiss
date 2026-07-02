@@ -1,32 +1,37 @@
 import { useState } from "react";
 import FormField from "./FormField";
+import { useNavigate } from "react-router";
 
 function LoginCard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   return (
-    <form className="text-[#4B2E2B] bg-[#D4A46B] w-[420px] border-2 border-[#593700] rounded-xl px-[36px] py-[40px]">
-      <div className="mb-[20px]">
+    <form className="rounded-2xl border border-border bg-card p-7 shadow-elevated">
+      <div className="space-y-5">
         <FormField
+          id="email"
           label="Email"
           type="email"
           placeholder="seu@email.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={setEmail}
         />
-      </div>
-
-      <div className="mb-[28px]">
         <FormField
+          id="password"
           label="Senha"
           type="password"
           placeholder="••••••••"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={setPassword}
         />
       </div>
-      <button className="transition text-orange-50 bg-[#593700] hover:bg-[#503200] rounded-lg w-full py-3 cursor-pointer font-medium">
+
+      <button
+        onClick={() => navigate("/recipes")}
+        className="mt-7 w-full rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring"
+      >
         Entrar
       </button>
     </form>

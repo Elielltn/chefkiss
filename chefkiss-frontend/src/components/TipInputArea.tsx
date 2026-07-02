@@ -1,4 +1,4 @@
-import Button from "./Button";
+import { Lightbulb } from "lucide-react";
 
 type tipInputAreaProps = {
   tipsArr: string[];
@@ -15,20 +15,23 @@ function TipInputArea({
 }: tipInputAreaProps) {
   return (
     <div className="flex items-start gap-[10px]">
-      <span className="mt-[10px] text-[16px] shrink-0">💡</span>
+      <span className="mt-2 grid size-7 shrink-0 place-items-center rounded-full bg-accent/15">
+        <Lightbulb className="size-3.5 text-accent" />
+      </span>
       <textarea
-        className="bg-[#FFFAF2] border-[1.5px] border-solid border-[#8B5E2C] rounded-lg py-[10px] px-[14px] text-[#C8953A] text-[14px] outline-none box-border w-full flex-1 resize-y min-h-[50px]"
+        className="min-h-[68px] flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:border-accent focus:ring-3 focus:ring-accent/25"
         value={tip}
         placeholder="Dica ou observação"
         rows={2}
         onChange={(e) => onChange(e.target.value)}
       ></textarea>
       {tipsArr.length > 1 && (
-        <Button
-          classes="bg-transparent border-none cursor-pointer text-[20px] px-[4px] leading-none shrink-[0]"
-          text="×"
+        <button
+          className="bg-transparent border-none cursor-pointer text-[20px] px-[4px] leading-none shrink-[0]"
           onClick={() => onRemoveTip()}
-        />
+        >
+          ×
+        </button>
       )}
     </div>
   );

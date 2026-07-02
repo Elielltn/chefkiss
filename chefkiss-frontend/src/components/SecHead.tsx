@@ -4,9 +4,11 @@ type secHeadProps = {
 
 function SecHead({ title }: secHeadProps) {
   return (
-    <div className="flex items-center gap-[10px]">
-      <span className="text-[15px] font-bold whitespace-nowrap">{title}</span>
-      <div className="flex-1 h-[1px] bg-[#593700]" />
+    <div className="flex items-center gap-3">
+      <h3 className="font-display text-lg font-semibold text-foreground">
+        {title}
+      </h3>
+      <span className="h-px flex-1 bg-border" aria-hidden />
     </div>
   );
 }

@@ -9,16 +9,18 @@ function CategoryBtn({ label, active, catsArr, onClick }: categoryBtnProps) {
   const disabled = catsArr.length >= 2;
   return (
     <button
-      className="text-[12px] py-[5px] px-[14px] rounded-[20px] whitespace-nowrap shrink-0"
-      style={{
-        background: active ? "#3D1800" : disabled ? "#E8E0D5" : "transparent",
-        color: active ? "#FDF5E6" : disabled ? "#C4B8A8" : "#5C3010",
-        border: `1.5px solid ${active ? "#3D1800" : disabled ? "#C4B8A8" : "#8B5E2C"}`,
-        fontWeight: active ? 500 : 400,
-        cursor: disabled && !active ? "not-allowed" : "pointer",
-      }}
-      disabled={active ? false : disabled}
+      key={label}
+      type="button"
       onClick={onClick}
+      disabled={active ? false : disabled}
+      className={
+        "rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all focus-visible:focus-ring " +
+        (active
+          ? "border-primary bg-primary text-primary-foreground shadow-soft"
+          : disabled
+            ? "border-border bg-surface text-muted-foreground opacity-60 cursor-not-allowed"
+            : "border-border bg-surface text-foreground hover:border-accent hover:text-primary")
+      }
     >
       {label}
     </button>

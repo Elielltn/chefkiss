@@ -5,15 +5,12 @@ type stepContainerProps = {
 
 function StepContainer({ step, i }: stepContainerProps) {
   return (
-    <div className="flex gap-3.5">
-      <div className="bg-[#3D1800] text-[#FDF5E6] flex h-7 w-7 min-w-7 items-center justify-center rounded-full text-xs font-medium mt-0.5">
+    <li key={i} className="flex items-start gap-3.5">
+      <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
         {i + 1}
-      </div>
-
-      <p className="m-0 text-[15px] leading-[1.65] text-[#1A0800] font-sans">
-        {step}
-      </p>
-    </div>
+      </span>
+      <p className="text-sm leading-relaxed text-foreground">{step}</p>
+    </li>
   );
 }
 

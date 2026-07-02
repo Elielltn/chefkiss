@@ -51,14 +51,14 @@ function RecipesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <>
+    <main className="min-h-dvh">
       <div className="max-w-[1440px] w-full mx-auto flex flex-col py-[20px] z-0">
         <Header></Header>
         <InputArea onOpenModal={() => setIsModalOpen(true)}></InputArea>
         <RecipesGrid recipes={recipes}></RecipesGrid>
       </div>
       {isModalOpen && <AddRecipeModal onClose={() => setIsModalOpen(false)} />}
-    </>
+    </main>
   );
 }
 

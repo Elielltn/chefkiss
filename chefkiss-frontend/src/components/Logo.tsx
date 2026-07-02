@@ -1,10 +1,14 @@
 type logoProps = {
   fontSize: number;
+  fontWeight?: number | string;
 };
 
-function Logo({ fontSize }: logoProps) {
+function Logo({ fontSize, fontWeight = 500 }: logoProps) {
   return (
-    <h1 style={{ fontSize: `${fontSize}px` }} className="logo text-[#593700]">
+    <h1
+      style={{ fontSize: `${fontSize}px`, fontWeight: fontWeight }}
+      className="font-display leading-none text-foreground"
+    >
       ChefKiss
     </h1>
   );

@@ -1,6 +1,5 @@
 import Label from "./Label";
-import Input from "./Input";
-import Button from "./Button";
+import AddButton from "./AddButton";
 import SecHead from "./SecHead";
 import CategoryBtn from "./CategoryBtn";
 import IngredientInputArea from "./IngredientInputArea";
@@ -9,6 +8,8 @@ import TipInputArea from "./TipInputArea";
 import type { typeIngredient } from "../types/typeIngridient";
 import { categories } from "../constants/categories";
 import { useState } from "react";
+
+import { X, ArrowRight } from "lucide-react";
 
 type addRecipeModalProps = {
   onClose: () => void;
@@ -73,23 +74,34 @@ function AddRecipeModal({ onClose }: addRecipeModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-10 flex items-center justify-center">
-      <div className="modal bg-white rounded-xl max-h-[90vh] max-w-[640px] w-full flex flex-col overflow-hidden">
-        <div className="flex align-center justify-between border-b-1 border-b-[#593700] px-[30px] py-[22px]">
-          <h2 className="text-[22px]">Nova Receita</h2>
-          <button onClick={onClose} className="text-[22px] cursor-pointer">
-            ×
+      <div className="w-full max-w-2xl rounded-2xl border border-border bg-card shadow-elevated">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+          <h2 className="font-display text-2xl font-semibold text-foreground">
+            Nova Receita
+          </h2>
+          <button
+            onClick={onClose}
+            aria-label="Fechar"
+            className="grid size-9 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:focus-ring"
+          >
+            <X className="size-4" />
           </button>
         </div>
-        <div className="py-[24px] px-[30px] overflow-y-auto flex flex-col gap-[26px]">
+
+        {/* Body */}
+        <div className="max-h-[70vh] space-y-7 overflow-y-auto px-6 py-6">
+          {/* Name */}
           <div>
             <Label labelContent="Nome da receita *" />
-            <Input
+            <input
               value={recipeName}
-              setValue={setRecipeName}
+              onChange={(e) => setRecipeName(e.target.value)}
               placeholder="Ex: Bolo de Limão Siciliano"
+              className="h-11 w-full rounded-lg border border-border bg-surface px-3.5 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-accent focus:ring-3 focus:ring-accent/25"
             />
           </div>
-
+          {/* Categories */}
           <div>
             <SecHead title="Categorias" />
             <div className="flex flex-wrap gap-[8px] mt-[12px]">
@@ -105,9 +117,9 @@ function AddRecipeModal({ onClose }: addRecipeModalProps) {
             </div>
           </div>
 
-          <div>
+          <div className="space-y-3">
             <SecHead title="Ingredientes" />
-            <div className="flex flex-col gap-[10px] mt-[12px]">
+            <div className="space-y-3">
               {recipeIngs.map((ing, i) => (
                 <IngredientInputArea
                   key={i}
@@ -119,16 +131,14 @@ function AddRecipeModal({ onClose }: addRecipeModalProps) {
                   }
                 />
               ))}
-              <Button
-                classes="self-start"
-                style="dashed"
-                text="+ Adicionar ingrediente"
-                onClick={() => addIngredient()}
-              />
             </div>
+            <AddButton
+              text="Adicionar ingrediente"
+              onClick={() => addIngredient()}
+            />
           </div>
 
-          <div>
+          <div className="space-y-3">
             <SecHead title="Passo a passo" />
             <div className="flex flex-col gap-[10px] mt-[12px]">
               {recipeSteps.map((step, i) => (
@@ -141,16 +151,11 @@ function AddRecipeModal({ onClose }: addRecipeModalProps) {
                   onChange={(newValue: string) => handleUpdateStep(i, newValue)}
                 />
               ))}
-              <Button
-                classes="self-start ml-[38px]"
-                style="dashed"
-                text="+ Adicionar passo"
-                onClick={() => handleAddStep()}
-              />
             </div>
+            <AddButton text="Adicionar passo" onClick={() => handleAddStep()} />
           </div>
 
-          <div>
+          <div className="space-y-3">
             <SecHead title="Dicas (Opcional)" />
             <div className="flex flex-col gap-[10px] mt-[12px]">
               {recipeTips.map((tip, i) => (
@@ -162,27 +167,28 @@ function AddRecipeModal({ onClose }: addRecipeModalProps) {
                   onRemoveTip={() => handleRemoveTip(i)}
                 />
               ))}
-              <Button
-                classes="self-start"
-                style="dashed"
-                text="+ Adicionar ingrediente"
-                onClick={() => handleAddTip()}
-              />
             </div>
+            <AddButton
+              text="Adicionar dica"
+              onClick={() => handleAddTip()}
+            />
           </div>
         </div>
-        <div className="py-[18px] px-[30px] border-t border-t-[#8B5E2C33] flex justify-between shrink-0">
+
+        {/* footer */}
+        <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-4">
           <button
             onClick={onClose}
-            className="bg-transparent text-[#5C3010] border-[1.5px] border-solid border-[#8B5E2C] rounded-lg py-[11px] px-[22px] text-[14px] font-medium cursor-pointer font-sans"
+            className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary focus-visible:focus-ring"
           >
             Cancelar
           </button>
           <button
             onClick={onClose}
-            className="bg-[#3D1800] text-[#FDF5E6] border-none rounded-lg py-[11px] px-[22px] text-[14px] font-medium cursor-pointer font-sans flex items-center gap-[6px]"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring"
           >
-            Salvar receita →
+            Salvar receita
+            <ArrowRight className="size-4" />
           </button>
         </div>
       </div>

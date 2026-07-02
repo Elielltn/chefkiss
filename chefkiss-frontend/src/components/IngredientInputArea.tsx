@@ -1,5 +1,4 @@
 import Input from "./Input";
-import Button from "./Button";
 import { units } from "../constants/units";
 import type { typeIngredient } from "../types/typeIngridient";
 
@@ -29,6 +28,7 @@ function IngredientInputArea({
         setValue={(newValue) => onChange("quantity", newValue)}
       />
       <select
+        className="h-10 rounded-lg border border-border bg-surface px-2 text-sm focus:outline-none focus:border-accent focus:ring-3 focus:ring-accent/25"
         value={ingredient.unit}
         onChange={(e) => {
           onChange("unit", e.target.value);
@@ -41,11 +41,12 @@ function IngredientInputArea({
         ))}
       </select>
       {ingsArr.length > 1 && (
-        <Button
-          classes="bg-transparent border-none cursor-pointer text-[20px] px-[4px] leading-none shrink-[0]"
-          text="×"
+        <button
+          className="bg-transparent border-none cursor-pointer text-[20px] px-[4px] leading-none shrink-[0]"
           onClick={() => onRemoveIngredient()}
-        />
+        >
+          ×
+        </button>
       )}
     </div>
   );

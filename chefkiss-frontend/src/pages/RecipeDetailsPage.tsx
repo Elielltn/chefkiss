@@ -1,7 +1,10 @@
 import TagBadge from "../components/TagBadge";
-import RecipeSection from "../components/RecipeSection";
 import IngredientContainer from "../components/IngredientContainer";
 import StepContainer from "../components/StepContainer";
+
+import { ArrowLeft, Lightbulb } from "lucide-react";
+
+import { useNavigate } from "react-router";
 
 const tags = ["Sobremesa", "Doce"];
 const recipeName = "Torta de chocolate";
@@ -15,48 +18,70 @@ const steps = ["Passo 1", "Passo 2", "Passo 3", "Passo 4"];
 const tips = ["Cuidado para não queimar o recheio"];
 
 function RecipeDetailsPage() {
+  const navigate = useNavigate();
+
   return (
-    <div className="max-w-[1440px] w-full mx-auto flex flex-col py-[20px] px-[20px]">
-      <div className="flex gap-[20px] mb-[28px] items-start">
-        <button className="bg-transparent text-[#5C3010] border-[1.5px] border-solid border-[#8B5E2C] rounded-lg py-[11px] px-[22px] text-[14px] font-medium cursor-pointer py-[8px] px-[14px] text-[13px] shrink-0">
-          ← Voltar
-        </button>
-        <div>
-          <div className="flex gap-[6px] mb-[8px]">
-            {tags.map((tag) => (
-              <TagBadge label={tag} />
-            ))}
-          </div>
-          <h1 className="text-[36px] text-[#593700] font-semibold">
-            {recipeName}
-          </h1>
+    <main className="min-h-dvh">
+      <div className="mx-auto max-w-4xl px-6 py-10 md:py-14">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => navigate("/recipes")}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-medium text-foreground shadow-soft transition-colors hover:bg-secondary hover:border-border-strong focus-visible:focus-ring"
+          >
+            <ArrowLeft className="size-4" />
+            Voltar
+          </button>
+          {tags.map((tag) => (
+            <TagBadge key={tag} label={tag} />
+          ))}
         </div>
+
+        <h1 className="mt-6 font-display text-4xl font-semibold leading-tight text-foreground md:text-5xl">
+          {recipeName}
+        </h1>
+
+        <article className="mt-8 rounded-2xl border border-border bg-surface-2/60 p-6 shadow-soft md:p-8">
+          <section>
+            <h2 className="font-display text-2xl font-semibold text-foreground">
+              Ingredientes
+            </h2>
+            <ul className="mt-4 space-y-2">
+              {ingredients.map((ing, i) => (
+                <IngredientContainer ing={ing} i={i} />
+              ))}
+            </ul>
+          </section>
+
+          <section className="mt-10">
+            <h2 className="font-display text-2xl font-semibold text-foreground">
+              Como fazer
+            </h2>
+            <ol className="mt-4 space-y-4">
+              {steps.map((s, i) => (
+                <StepContainer step={s} i={i} />
+              ))}
+            </ol>
+          </section>
+
+          {tips.length > 0 && (
+            <section className="mt-10">
+              <h2 className="font-display text-2xl font-semibold text-foreground">
+                Dicas
+              </h2>
+              {tips.map((tip, i) => (
+                <div
+                  key={i}
+                  className="mt-4 flex items-start gap-3 rounded-lg border-l-4 border-accent bg-surface px-4 py-3 shadow-soft"
+                >
+                  <Lightbulb className="mt-0.5 size-4 shrink-0 text-accent" />
+                  <p className="text-sm text-foreground">{tip}</p>
+                </div>
+              ))}
+            </section>
+          )}
+        </article>
       </div>
-      <div className="bg-[#D4A46B] border-2 border-[#593700] rounded-xl py-[32px] px-[36px]">
-        <RecipeSection label={"Ingredientes"}>
-          {ingredients.map((ing, i) => (
-            <IngredientContainer key={i} ing={ing} />
-          ))}
-        </RecipeSection>
-        <RecipeSection label={"Como fazer"} gap={14}>
-          {steps.map((step, i) => (
-            <StepContainer key={i} step={step} i={i} />
-          ))}
-        </RecipeSection>
-        {tips.length > 0 && (
-          <RecipeSection label={"Dicas"} gap={10}>
-            {tips.map((tip, i) => (
-              <div
-                key={i}
-                className="bg-[#FFFAF2] border-l-[3px] border-l-[#3D1800] rounded-r-lg px-[14px] py-[10px] text-[14px] text-[#1A0800] leading-[1.55] font-sans"
-              >
-                💡 {tip}
-              </div>
-            ))}
-          </RecipeSection>
-        )}
-      </div>
-    </div>
+    </main>
   );
 }
 

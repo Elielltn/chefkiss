@@ -4,7 +4,7 @@ type tagBadgeProps = {
 
 function TagBadge({ label }: tagBadgeProps) {
   return (
-    <span className="bg-[#3D1800] text-[#FDF5E6] rounded-[20px] py-[3px] px-[12px] text-[12px] font-medium font-bold tracking-wider">
+    <span className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
       {label}
     </span>
   );

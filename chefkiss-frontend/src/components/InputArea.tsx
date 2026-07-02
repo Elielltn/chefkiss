@@ -1,27 +1,27 @@
+import { Search, Plus } from "lucide-react";
+
 type inputAreaProps = {
-  onOpenModal: () => void
-}
+  onOpenModal: () => void;
+};
 
-
-function InputArea({onOpenModal}: inputAreaProps) {
+function InputArea({ onOpenModal }: inputAreaProps) {
   return (
-    <div className="flex items-center justify-between mb-[36px]">
-      <input
-        type="text"
-        placeholder="Digite o nome de uma receita aqui..."
-        className="text-[#593700] bg-[#A97D47] border-2 rounded-lg border-[#593700] p-[15px] max-w-[790px] w-[100%]"
-      />
-      <button className="bg-[#593700] rounded-[999px]" onClick={onOpenModal}>
-        <svg
-          width="50"
-          height="50"
-          viewBox="0 0 50 50"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M25 12.5L25 37.5" stroke="#FFD6A8" strokeLinecap="round" />
-          <path d="M37.5 25L12.5 25" stroke="#FFD6A8" strokeLinecap="round" />
-        </svg>
+    <div className="mt-10 flex items-center gap-3">
+      <div className="relative flex-1">
+        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Digite o nome de uma receita aqui..."
+          className="h-12 w-full rounded-xl border border-border bg-surface pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground shadow-soft transition-colors focus:outline-none focus:border-accent focus:ring-3 focus:ring-accent/25"
+          aria-label="Buscar receita"
+        />
+      </div>
+      <button
+        aria-label="Adicionar nova receita"
+        className="grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring"
+        onClick={onOpenModal}
+      >
+        <Plus className="size-5" strokeWidth={2.25} />
       </button>
     </div>
   );
