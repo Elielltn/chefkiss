@@ -5,15 +5,13 @@ import { BrowserRouter, Routes, Route } from "react-router";
 
 function App() {
   return (
-    <div className="min-h-screen">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/auth" element={<LoginPage />}></Route>
-          <Route path="/recipes" element={<RecipesPage />}></Route>
-          <Route path="/recipe" element={<RecipeDetailsPage />}></Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/auth" element={<LoginPage />}></Route>
+        <Route path="/recipes" element={<RecipesPage />}></Route>
+        <Route path="/recipe" element={<RecipeDetailsPage />}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
