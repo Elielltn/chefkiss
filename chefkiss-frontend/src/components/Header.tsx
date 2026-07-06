@@ -5,6 +5,11 @@ import { useNavigate } from "react-router";
 function Header() {
   const navigate = useNavigate();
 
+  async function handleLogout() {
+    localStorage.removeItem("token");
+    navigate("/auth");
+  }
+
   return (
     <header className="flex items-start justify-between gap-4">
       <div className="flex items-center gap-3">
@@ -19,9 +24,7 @@ function Header() {
         </div>
       </div>
       <button
-        onClick={() => {
-          navigate("/auth");
-        }}
+        onClick={handleLogout}
         className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground shadow-soft transition-colors hover:bg-secondary hover:border-border-strong focus-visible:focus-ring"
       >
         <LogOut className="size-4" />

@@ -7,8 +7,30 @@ function LoginCard() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  async function handleSubmit(e: React.SubmitEvent) {
+    e.preventDefault();
+
+    const response = await fetch("http://localhost:3000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      console.log("Credenciais inválidas");
+      return;
+    }
+
+    const data = await response.json();
+    localStorage.setItem("token", data.token);
+    navigate("/recipes");
+  }
+
   return (
-    <form className="rounded-2xl border border-border bg-card p-7 shadow-elevated">
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-2xl border border-border bg-card p-7 shadow-elevated"
+    >
       <div className="space-y-5">
         <FormField
           id="email"
@@ -28,10 +50,7 @@ function LoginCard() {
         />
       </div>
 
-      <button
-        onClick={() => navigate("/recipes")}
-        className="mt-7 w-full rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring"
-      >
+      <button className="mt-7 w-full rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring">
         Entrar
       </button>
     </form>
