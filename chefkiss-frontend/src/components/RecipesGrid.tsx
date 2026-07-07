@@ -39,6 +39,7 @@ function RecipesGrid({
           {recipes.map((recipe) => (
             <RecipeCard
               key={recipe.id}
+              id={recipe.id}
               name={recipe.name}
               categories={recipe.categories}
             ></RecipeCard>

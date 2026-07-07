@@ -1,16 +1,17 @@
 import { useNavigate } from "react-router";
 
 type recipeCardProps = {
+  id: string;
   name: string;
   categories: string[];
 };
 
-function RecipeCard({ name, categories }: recipeCardProps) {
+function RecipeCard({ id, name, categories }: recipeCardProps) {
   const navigate = useNavigate();
 
   return (
     <div
-      onClick={() => navigate("/recipe")}
+      onClick={() => navigate(`/recipe/${id}`)}
       className="group overflow-hidden rounded-xl border border-border bg-card shadow-soft transition-all hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-elevated focus-visible:focus-ring"
     >
       <div
