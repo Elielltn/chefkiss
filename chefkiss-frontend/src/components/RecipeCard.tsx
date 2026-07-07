@@ -2,10 +2,10 @@ import { useNavigate } from "react-router";
 
 type recipeCardProps = {
   name: string;
-  tags: string[];
+  categories: string[];
 };
 
-function RecipeCard({ name, tags }: recipeCardProps) {
+function RecipeCard({ name, categories }: recipeCardProps) {
   const navigate = useNavigate();
 
   return (
@@ -26,7 +26,9 @@ function RecipeCard({ name, tags }: recipeCardProps) {
           {name}
         </h3>
         <p className="mt-1 text-xs text-muted-foreground">
-          {tags.slice(0, 2).join(" • ")}
+          {categories.length > 1
+            ? categories.slice(0, 2).join(" • ")
+            : categories[0]}
         </p>
       </div>
     </div>

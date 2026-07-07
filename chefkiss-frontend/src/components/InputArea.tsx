@@ -2,14 +2,16 @@ import { Search, Plus } from "lucide-react";
 
 type inputAreaProps = {
   onOpenModal: () => void;
+  onChange: (value: string) => void;
 };
 
-function InputArea({ onOpenModal }: inputAreaProps) {
+function InputArea({ onOpenModal, onChange }: inputAreaProps) {
   return (
     <div className="mt-10 flex items-center gap-3">
       <div className="relative flex-1">
         <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <input
+          onChange={(e) => onChange(e.target.value)}
           type="text"
           placeholder="Digite o nome de uma receita aqui..."
           className="h-12 w-full rounded-xl border border-border bg-surface pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground shadow-soft transition-colors focus:outline-none focus:border-accent focus:ring-3 focus:ring-accent/25"

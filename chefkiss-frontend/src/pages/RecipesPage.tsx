@@ -1,61 +1,90 @@
-import { useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Header from "../components/Header";
 import InputArea from "../components/InputArea";
 import RecipesGrid from "../components/RecipesGrid";
 import AddRecipeModal from "../components/AddRecipeModal";
 
-const recipes = [
-  {
-    id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    name: "Torta de Chocolate",
-    tags: ["Sobremesa", "Doce"],
-  },
-  {
-    id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-    name: "Pão de Queijo",
-    tags: ["Lanche", "Salgado"],
-  },
-  {
-    id: "c3d4e5f6-a7b8-9012-cdef-123456789012",
-    name: "Brigadeiro",
-    tags: ["Sobremesa", "Doce"],
-  },
-  {
-    id: "d4e5f6a7-b8c9-0123-defa-234567890123",
-    name: "Frango Assado",
-    tags: ["Prato principal", "Salgado"],
-  },
-  {
-    id: "e5f6a7b8-c9d0-1234-efab-345678901234",
-    name: "Bolo de Cenoura",
-    tags: ["Sobremesa", "Doce"],
-  },
-  {
-    id: "f6a7b8c9-d0e1-2345-fabc-456789012345",
-    name: "Coxinha",
-    tags: ["Aperitivo", "Salgado"],
-  },
-  {
-    id: "a7b8c9d0-e1f2-3456-abcd-567890123456",
-    name: "Suco de Maracujá",
-    tags: ["Bebida", "Doce"],
-  },
-  {
-    id: "b8c9d0e1-f2a3-4567-bcde-678901234567",
-    name: "Salada Caesar",
-    tags: ["Prato principal", "Vegetariano"],
-  },
-];
+import type { typeRecipe } from "../types/typeRecipe";
+
+const debounce = <T extends unknown[]>(
+  callback: (...args: T) => void,
+  delay: number,
+) => {
+  let timeoutTimer: ReturnType<typeof setTimeout>;
+
+  return (...args: T) => {
+    clearTimeout(timeoutTimer);
+    timeoutTimer = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
+};
 
 function RecipesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [recipes, setRecipes] = useState<typeRecipe[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+
+  function handleQueryChange(value: string) {
+    setPage(1);
+    setQuery(value);
+  }
+
+  const debouncedHandleQueryChange = useMemo(
+    () => debounce(handleQueryChange, 500),
+    [],
+  );
+
+  useEffect(() => {
+    async function fetchRecipes() {
+      setIsLoading(true);
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.log("Faça login para acessar suas receitas");
+        return;
+      }
+
+      const params = new URLSearchParams();
+      if (query) params.append("search", query);
+      params.append("page", `${page}`);
+
+      const response = await fetch(
+        `http://localhost:3000/recipes?${params.toString()}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      if (!response.ok) {
+        console.log("Erro ao buscar suas receitas");
+        return;
+      }
+
+      const data = await response.json();
+      setRecipes((prev) => (page === 1 ? data.data : [...prev, ...data.data]));
+      setHasMore(data.pagination.page < data.pagination.totalPages);
+      setIsLoading(false);
+    }
+
+    fetchRecipes();
+  }, [query, page]);
 
   return (
     <main className="min-h-dvh">
       <div className="max-w-[1440px] w-full mx-auto flex flex-col py-[20px] z-0">
         <Header></Header>
-        <InputArea onOpenModal={() => setIsModalOpen(true)}></InputArea>
-        <RecipesGrid recipes={recipes}></RecipesGrid>
+        <InputArea
+          onOpenModal={() => setIsModalOpen(true)}
+          onChange={debouncedHandleQueryChange}
+        ></InputArea>
+        <RecipesGrid
+          recipes={recipes}
+          isLoading={isLoading}
+          onClick={() => setPage((p) => p + 1)}
+          hasMore={hasMore}
+        ></RecipesGrid>
       </div>
       {isModalOpen && <AddRecipeModal onClose={() => setIsModalOpen(false)} />}
     </main>

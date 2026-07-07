@@ -1,22 +1,31 @@
 import RecipeCard from "./RecipeCard";
-
-type recipeType = {
-  id: string;
-  name: string;
-  tags: string[];
-};
+import type { typeRecipe } from "../types/typeRecipe";
 
 type recipesGridProps = {
-  recipes: recipeType[];
+  recipes: typeRecipe[];
+  isLoading: boolean;
+  onClick: () => void;
+  hasMore: boolean;
 };
 
-function RecipesGrid({ recipes }: recipesGridProps) {
+function RecipesGrid({
+  recipes,
+  isLoading,
+  onClick,
+  hasMore,
+}: recipesGridProps) {
   return (
     <section
       aria-label="Lista de receitas"
       className="mt-6 rounded-2xl border border-border bg-surface-2/60 p-5 shadow-soft"
     >
-      {recipes.length === 0 ? (
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
+          <p className="font-display text-xl text-foreground">
+            Aguarde enquanto buscamos suas receitas...
+          </p>
+        </div>
+      ) : recipes.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
           <p className="font-display text-xl text-foreground">
             Nenhuma receita encontrada
@@ -31,10 +40,20 @@ function RecipesGrid({ recipes }: recipesGridProps) {
             <RecipeCard
               key={recipe.id}
               name={recipe.name}
-              tags={recipe.tags}
+              categories={recipe.categories}
             ></RecipeCard>
           ))}
         </div>
+      )}
+      {recipes.length > 0 && hasMore ? (
+        <button
+          onClick={onClick}
+          className="mx-auto mt-6 block w-36 rounded-xl bg-primary text-sm text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring py-3"
+        >
+          Mostrar mais
+        </button>
+      ) : (
+        <></>
       )}
     </section>
   );
