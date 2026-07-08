@@ -13,9 +13,10 @@ import { X, ArrowRight } from "lucide-react";
 
 type addRecipeModalProps = {
   onClose: () => void;
+  onSuccess: () => void;
 };
 
-function AddRecipeModal({ onClose }: addRecipeModalProps) {
+function AddRecipeModal({ onClose, onSuccess }: addRecipeModalProps) {
   const [recipeName, setRecipeName] = useState("");
   const [recipeCats, setRecipeCats] = useState<string[]>([]);
   const [recipeIngs, setRecipeIngs] = useState<typeIngredient[]>([
@@ -23,6 +24,39 @@ function AddRecipeModal({ onClose }: addRecipeModalProps) {
   ]);
   const [recipeSteps, setRecipeSteps] = useState([""]);
   const [recipeTips, setRecipeTips] = useState([""]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  async function handleCreateRecipe() {
+    setErrorMessage(null);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setErrorMessage("Faça login para criar receitas.");
+      return;
+    }
+
+    const response = await fetch("http://localhost:3000/recipes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        name: recipeName,
+        categories: recipeCats,
+        ingredients: recipeIngs.filter((ing) => ing.name.trim() !== ""),
+        steps: recipeSteps.filter((s) => s.trim() !== ""),
+        tips: recipeTips.filter((t) => t.trim() !== ""),
+      }),
+    });
+
+    if (!response.ok) {
+      setErrorMessage("Erro ao adicionar receita. Verifique os campos.");
+      return;
+    }
+
+    onSuccess();
+    onClose();
+  }
 
   function toggleCategory(category: string) {
     setRecipeCats((categories) =>
@@ -168,12 +202,13 @@ function AddRecipeModal({ onClose }: addRecipeModalProps) {
                 />
               ))}
             </div>
-            <AddButton
-              text="Adicionar dica"
-              onClick={() => handleAddTip()}
-            />
+            <AddButton text="Adicionar dica" onClick={() => handleAddTip()} />
           </div>
         </div>
+
+        {errorMessage && (
+          <p className="px-6 text-sm text-red-600">{errorMessage}</p>
+        )}
 
         {/* footer */}
         <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-4">
@@ -184,7 +219,7 @@ function AddRecipeModal({ onClose }: addRecipeModalProps) {
             Cancelar
           </button>
           <button
-            onClick={onClose}
+            onClick={handleCreateRecipe}
             className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring"
           >
             Salvar receita

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import Header from "../components/Header";
 import InputArea from "../components/InputArea";
 import RecipesGrid from "../components/RecipesGrid";
@@ -27,6 +27,7 @@ function RecipesPage() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const [unauthorized, setUnauthorized] = useState(false);
 
   function handleQueryChange(value: string) {
     setPage(1);
@@ -38,38 +39,47 @@ function RecipesPage() {
     [],
   );
 
-  useEffect(() => {
-    async function fetchRecipes() {
-      setIsLoading(true);
-      const token = localStorage.getItem("token");
+  const fetchRecipes = useCallback(async () => {
+    setIsLoading(true);
+    setUnauthorized(false);
 
-      if (!token) {
-        console.log("Faça login para acessar suas receitas");
-        return;
-      }
-
-      const params = new URLSearchParams();
-      if (query) params.append("search", query);
-      params.append("page", `${page}`);
-
-      const response = await fetch(
-        `http://localhost:3000/recipes?${params.toString()}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-
-      if (!response.ok) {
-        console.log("Erro ao buscar suas receitas");
-        return;
-      }
-
-      const data = await response.json();
-      setRecipes((prev) => (page === 1 ? data.data : [...prev, ...data.data]));
-      setHasMore(data.pagination.page < data.pagination.totalPages);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUnauthorized(true);
       setIsLoading(false);
+      return;
     }
 
-    fetchRecipes();
+    const params = new URLSearchParams();
+    if (query) params.append("search", query);
+    params.append("page", `${page}`);
+
+    const response = await fetch(
+      `http://localhost:3000/recipes?${params.toString()}`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+
+    if (response.status === 401) {
+      setUnauthorized(true);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!response.ok) {
+      console.log("Erro ao buscar suas receitas");
+      setIsLoading(false);
+      return;
+    }
+
+    const data = await response.json();
+    setRecipes((prev) => (page === 1 ? data.data : [...prev, ...data.data]));
+    setHasMore(data.pagination.page < data.pagination.totalPages);
+    setIsLoading(false);
   }, [query, page]);
+
+  useEffect(() => {
+    fetchRecipes();
+  }, [fetchRecipes]);
 
   return (
     <main className="min-h-dvh">
@@ -84,9 +94,15 @@ function RecipesPage() {
           isLoading={isLoading}
           onClick={() => setPage((p) => p + 1)}
           hasMore={hasMore}
+          unauthorized={unauthorized}
         ></RecipesGrid>
       </div>
-      {isModalOpen && <AddRecipeModal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <AddRecipeModal
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={fetchRecipes}
+        />
+      )}
     </main>
   );
 }

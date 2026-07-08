@@ -6,6 +6,7 @@ type recipesGridProps = {
   isLoading: boolean;
   onClick: () => void;
   hasMore: boolean;
+  unauthorized: boolean;
 };
 
 function RecipesGrid({
@@ -13,6 +14,7 @@ function RecipesGrid({
   isLoading,
   onClick,
   hasMore,
+  unauthorized,
 }: recipesGridProps) {
   return (
     <section
@@ -23,6 +25,12 @@ function RecipesGrid({
         <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
           <p className="font-display text-xl text-foreground">
             Aguarde enquanto buscamos suas receitas...
+          </p>
+        </div>
+      ) : unauthorized ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
+          <p className="font-display text-xl text-foreground">
+            Faça login para acessar as suas receitas.
           </p>
         </div>
       ) : recipes.length === 0 ? (
@@ -53,9 +61,7 @@ function RecipesGrid({
         >
           Mostrar mais
         </button>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </section>
   );
 }
