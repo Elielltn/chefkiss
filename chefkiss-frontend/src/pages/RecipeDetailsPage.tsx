@@ -6,7 +6,13 @@ import StepContainer from "../components/StepContainer";
 import Logo from "../components/Logo";
 import type { typeRecipeDetails } from "../types/typeRecipeDetails";
 
-import { ArrowLeft, Lightbulb } from "lucide-react";
+import {
+  ArrowLeft,
+  Lightbulb,
+  Pencil,
+  Trash2,
+  AlertTriangle,
+} from "lucide-react";
 
 function RecipeDetailsPage() {
   const { id } = useParams();
@@ -15,6 +21,34 @@ function RecipeDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  async function handleDelete() {
+    setIsDeleting(true);
+    setDeleteError(null);
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setDeleteError("Você precisa estar logado para excluir uma receita");
+      setIsDeleting(false);
+      return;
+    }
+
+    const result = await fetch(`http://localhost:3000/recipes/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!result.ok) {
+      setDeleteError("Ocorreu um erro ao excluir a receita.");
+      setIsDeleting(false);
+      return;
+    }
+
+    navigate("/recipes");
+  }
 
   useEffect(() => {
     async function fetchRecipeDetails() {
@@ -52,10 +86,6 @@ function RecipeDetailsPage() {
 
     fetchRecipeDetails();
   }, [id]);
-  
-  if (isLoading) {
-    return null; // ou um container vazio do mesmo tamanho, pra evitar layout shift
-  }
 
   if (isLoading && showLoading) {
     return (
@@ -75,6 +105,10 @@ function RecipeDetailsPage() {
         </div>
       </main>
     );
+  }
+
+  if (isLoading) {
+    return null;
   }
 
   if (error) {
@@ -100,17 +134,31 @@ function RecipeDetailsPage() {
   return (
     <main className="min-h-dvh">
       <div className="mx-auto max-w-4xl px-6 py-10 md:py-14">
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => navigate("/recipes")}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-medium text-foreground shadow-soft transition-colors hover:bg-secondary hover:border-border-strong focus-visible:focus-ring"
-          >
-            <ArrowLeft className="size-4" />
-            Voltar
-          </button>
-          {data?.categories.map((cat) => (
-            <TagBadge key={cat} label={cat} />
-          ))}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => navigate("/recipes")}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-medium text-foreground shadow-soft transition-colors hover:bg-secondary hover:border-border-strong focus-visible:focus-ring"
+            >
+              <ArrowLeft className="size-4" />
+              Voltar
+            </button>
+            {data?.categories.map((cat) => (
+              <TagBadge key={cat} label={cat} />
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-medium text-foreground shadow-soft transition-colors hover:border-accent hover:text-primary focus-visible:focus-ring">
+              <Pencil className="size-4" /> Atualizar
+            </button>
+            <button
+              onClick={() => setConfirmOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/30 bg-destructive/10 px-3.5 py-2 text-sm font-medium text-destructive shadow-soft transition-colors hover:bg-destructive hover:text-destructive-foreground hover:border-destructive focus-visible:focus-ring"
+            >
+              <Trash2 className="size-4" /> Excluir
+            </button>
+          </div>
         </div>
 
         <h1 className="mt-6 font-display text-4xl font-semibold leading-tight text-foreground md:text-5xl">
@@ -158,6 +206,57 @@ function RecipeDetailsPage() {
           )}
         </article>
       </div>
+
+      {confirmOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Confirmar exclusão"
+          className="fixed inset-0 z-50 grid place-items-center px-4 py-8 bg-primary/50 backdrop-blur-sm"
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-border bg-card shadow-elevated"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-4 px-6 pt-6">
+              <span className="grid size-11 shrink-0 place-items-center rounded-full bg-destructive/10 text-destructive">
+                <AlertTriangle className="size-5" />
+              </span>
+              <div className="flex-1">
+                <h2 className="font-display text-xl font-semibold text-foreground">
+                  Excluir receita?
+                </h2>
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                  Tem certeza que deseja excluir{" "}
+                  <span className="font-medium text-foreground">
+                    "{data?.name}"
+                  </span>
+                  ? Essa ação não pode ser desfeita.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 flex items-center justify-end gap-3 border-t border-border px-6 py-4">
+              {deleteError && (
+                <p className="px-6 text-sm text-destructive">{deleteError}</p>
+              )}
+              <button
+                onClick={() => setConfirmOpen(false)}
+                className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary focus-visible:focus-ring"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="inline-flex items-center gap-2 rounded-lg bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground shadow-soft transition-all hover:opacity-90 hover:shadow-elevated focus-visible:focus-ring disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Trash2 className="size-4" />
+                {isDeleting ? "Excluindo..." : "Excluir"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -83,7 +83,7 @@ function RecipesPage() {
 
   return (
     <main className="min-h-dvh">
-      <div className="max-w-[1440px] w-full mx-auto flex flex-col py-[20px] z-0">
+      <div className="max-w-[1440px] w-full mx-auto flex flex-col py-[20px]">
         <Header></Header>
         <InputArea
           onOpenModal={() => setIsModalOpen(true)}
