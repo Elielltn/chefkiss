@@ -5,6 +5,7 @@ import {
   createRecipeSchema,
   listRecipeSchema,
   recipeIdSchema,
+  updateRecipeSchema,
 } from "../schemas/recipeSchemas.js";
 import { error } from "node:console";
 
@@ -130,4 +131,46 @@ export async function deleteRecipe(req: AuthRequest, res: Response) {
   });
 
   return res.status(204).send();
+}
+
+export async function updateRecipe(req: AuthRequest, res: Response) {
+  const paramsResult = recipeIdSchema.safeParse(req.params);
+  if (!paramsResult.success) {
+    return res.status(400).json({ error: paramsResult.error.issues });
+  }
+
+  const bodyResult = updateRecipeSchema.safeParse(req.body);
+  if (!bodyResult.success) {
+    return res.status(400).json({ error: bodyResult.error.issues });
+  }
+
+  const { id } = paramsResult.data;
+  const { name, categories, ingredients, steps, tips } = bodyResult.data;
+
+  const recipe = await prisma.recipe.findUnique({ where: { id } });
+
+  if (!recipe) {
+    return res.status(404).json({ error: "Receita não encontrada." });
+  }
+
+  if (recipe.authorId !== req.userId) {
+    return res.status(403).json({ error: "Acesso negado." });
+  }
+
+  const updatedRecipe = await prisma.recipe.update({
+    where: { id },
+    data: {
+      name,
+      categories,
+      steps,
+      tips: tips ?? [],
+      ingredients: {
+        deleteMany: {},
+        create: ingredients,
+      },
+    },
+    include: { ingredients: true },
+  });
+
+  return res.status(200).json(updatedRecipe);
 }

@@ -24,3 +24,5 @@ export const listRecipeSchema = z.object({
 export const recipeIdSchema = z.object({
   id: z.uuid(),
 });
+
+export const updateRecipeSchema = createRecipeSchema;
