@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import TagBadge from "../components/TagBadge";
 import IngredientContainer from "../components/IngredientContainer";
 import StepContainer from "../components/StepContainer";
@@ -13,6 +13,7 @@ import {
   Trash2,
   AlertTriangle,
 } from "lucide-react";
+import AddRecipeModal from "../components/AddRecipeModal";
 
 function RecipeDetailsPage() {
   const { id } = useParams();
@@ -23,6 +24,7 @@ function RecipeDetailsPage() {
   const [error, setError] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [updateOpen, setUpdateOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   async function handleDelete() {
@@ -50,7 +52,7 @@ function RecipeDetailsPage() {
     navigate("/recipes");
   }
 
-  useEffect(() => {
+  const fetchRecipeDetails = useCallback(
     async function fetchRecipeDetails() {
       setIsLoading(true);
       setShowLoading(false);
@@ -82,10 +84,13 @@ function RecipeDetailsPage() {
 
       setData(data);
       setIsLoading(false);
-    }
+    },
+    [id],
+  );
 
+  useEffect(() => {
     fetchRecipeDetails();
-  }, [id]);
+  }, [fetchRecipeDetails]);
 
   if (isLoading && showLoading) {
     return (
@@ -131,6 +136,26 @@ function RecipeDetailsPage() {
     );
   }
 
+  if (!data) {
+    return (
+      <main className="min-h-dvh grid place-items-center">
+        <div className="flex flex-col items-center gap-1.5">
+          <Logo fontSize={42} />
+          <div className="flex flex-col items-center gap-1.5">
+            <p>Receita não encontrada.</p>
+            <button
+              onClick={() => navigate("/recipes")}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-medium text-foreground shadow-soft transition-colors hover:bg-secondary hover:border-border-strong focus-visible:focus-ring"
+            >
+              <ArrowLeft className="size-4" />
+              Voltar
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-dvh">
       <div className="mx-auto max-w-4xl px-6 py-10 md:py-14">
@@ -149,7 +174,10 @@ function RecipeDetailsPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-medium text-foreground shadow-soft transition-colors hover:border-accent hover:text-primary focus-visible:focus-ring">
+            <button
+              onClick={() => setUpdateOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-medium text-foreground shadow-soft transition-colors hover:border-accent hover:text-primary focus-visible:focus-ring"
+            >
               <Pencil className="size-4" /> Atualizar
             </button>
             <button
@@ -162,7 +190,7 @@ function RecipeDetailsPage() {
         </div>
 
         <h1 className="mt-6 font-display text-4xl font-semibold leading-tight text-foreground md:text-5xl">
-          {data?.name}
+          {data.name}
         </h1>
 
         <article className="mt-8 rounded-2xl border border-border bg-surface-2/60 p-6 shadow-soft md:p-8">
@@ -171,7 +199,7 @@ function RecipeDetailsPage() {
               Ingredientes
             </h2>
             <ul className="mt-4 space-y-2">
-              {data?.ingredients.map((ing, i) => (
+              {data.ingredients.map((ing, i) => (
                 <IngredientContainer key={i} ing={ing} i={i} />
               ))}
             </ul>
@@ -182,18 +210,18 @@ function RecipeDetailsPage() {
               Como fazer
             </h2>
             <ol className="mt-4 space-y-4">
-              {data?.steps.map((s, i) => (
+              {data.steps.map((s, i) => (
                 <StepContainer key={i} step={s} i={i} />
               ))}
             </ol>
           </section>
 
-          {(data?.tips?.length ?? 0) > 0 && (
+          {(data.tips.length ?? 0) > 0 && (
             <section className="mt-10">
               <h2 className="font-display text-2xl font-semibold text-foreground">
                 Dicas
               </h2>
-              {data?.tips.map((tip, i) => (
+              {data.tips.map((tip, i) => (
                 <div
                   key={i}
                   className="mt-4 flex items-start gap-3 rounded-lg border-l-4 border-accent bg-surface px-4 py-3 shadow-soft"
@@ -229,7 +257,7 @@ function RecipeDetailsPage() {
                 <p className="mt-1.5 text-sm text-muted-foreground">
                   Tem certeza que deseja excluir{" "}
                   <span className="font-medium text-foreground">
-                    "{data?.name}"
+                    "{data.name}"
                   </span>
                   ? Essa ação não pode ser desfeita.
                 </p>
@@ -256,6 +284,20 @@ function RecipeDetailsPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {updateOpen && (
+        <AddRecipeModal
+          onClose={() => setUpdateOpen(false)}
+          onSuccess={fetchRecipeDetails}
+          update={true}
+          id={id}
+          name={data.name}
+          prevCategories={data.categories}
+          ingredients={data.ingredients}
+          steps={data.steps}
+          tips={data.tips}
+        />
       )}
     </main>
   );

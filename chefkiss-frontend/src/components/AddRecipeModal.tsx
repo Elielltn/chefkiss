@@ -14,17 +14,35 @@ import { X, ArrowRight } from "lucide-react";
 type addRecipeModalProps = {
   onClose: () => void;
   onSuccess: () => void;
+  update?: boolean;
+  id?: string;
+  name?: string;
+  prevCategories?: string[];
+  ingredients?: typeIngredient[];
+  steps?: string[];
+  tips?: string[];
 };
 
-function AddRecipeModal({ onClose, onSuccess }: addRecipeModalProps) {
-  const [recipeName, setRecipeName] = useState("");
-  const [recipeCats, setRecipeCats] = useState<string[]>([]);
-  const [recipeIngs, setRecipeIngs] = useState<typeIngredient[]>([
-    { name: "", quantity: "", unit: "g" },
-  ]);
-  const [recipeSteps, setRecipeSteps] = useState([""]);
-  const [recipeTips, setRecipeTips] = useState([""]);
+function AddRecipeModal({
+  onClose,
+  onSuccess,
+  update,
+  id,
+  name,
+  prevCategories,
+  ingredients,
+  steps,
+  tips,
+}: addRecipeModalProps) {
+  const [recipeName, setRecipeName] = useState(name || "");
+  const [recipeCats, setRecipeCats] = useState<string[]>(prevCategories || []);
+  const [recipeIngs, setRecipeIngs] = useState<typeIngredient[]>(
+    ingredients || [{ name: "", quantity: "", unit: "g" }],
+  );
+  const [recipeSteps, setRecipeSteps] = useState(steps || [""]);
+  const [recipeTips, setRecipeTips] = useState(tips || [""]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   async function handleCreateRecipe() {
     setErrorMessage(null);
@@ -54,6 +72,40 @@ function AddRecipeModal({ onClose, onSuccess }: addRecipeModalProps) {
       return;
     }
 
+    onSuccess();
+    onClose();
+  }
+
+  async function handleUpdateRecipe() {
+    setErrorMessage(null);
+    setIsUpdating(true);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsUpdating(false);
+      return setErrorMessage("Faça login para atualizar a receita");
+    }
+
+    const response = await fetch(`http://localhost:3000/recipes/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        name: recipeName,
+        categories: recipeCats,
+        ingredients: recipeIngs.filter((ing) => ing.name.trim() !== ""),
+        steps: recipeSteps.filter((s) => s.trim() !== ""),
+        tips: recipeTips.filter((t) => t.trim() !== ""),
+      }),
+    });
+
+    if (!response.ok) {
+      setIsUpdating(false);
+      return setErrorMessage("Erro ao atualizar receita. Verifique os campos.");
+    }
+
+    setIsUpdating(false);
     onSuccess();
     onClose();
   }
@@ -112,7 +164,7 @@ function AddRecipeModal({ onClose, onSuccess }: addRecipeModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <h2 className="font-display text-2xl font-semibold text-foreground">
-            Nova Receita
+            {update ? "Atualizar Receita" : "Nova Receita"}
           </h2>
           <button
             onClick={onClose}
@@ -219,10 +271,15 @@ function AddRecipeModal({ onClose, onSuccess }: addRecipeModalProps) {
             Cancelar
           </button>
           <button
-            onClick={handleCreateRecipe}
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring"
+            onClick={update ? handleUpdateRecipe : handleCreateRecipe}
+            disabled={isUpdating}
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Salvar receita
+            {isUpdating
+              ? "Atualizando receita..."
+              : update
+                ? "Atualizar receita"
+                : "Salvar receita"}
             <ArrowRight className="size-4" />
           </button>
         </div>
