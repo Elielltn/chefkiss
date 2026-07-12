@@ -25,7 +25,13 @@ export async function register(req: Request, res: Response) {
     data: { email, password: hashedPassword },
   });
 
-  return res.status(201).json({ id: user.id, email: user.email });
+  const token = jwt.sign(
+    { userId: user.id },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "7d" },
+  );
+
+  return res.status(201).json({ id: user.id, email: user.email, token });
 }
 
 export async function login(req: Request, res: Response) {
