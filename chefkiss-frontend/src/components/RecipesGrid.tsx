@@ -4,6 +4,7 @@ import type { typeRecipe } from "../types/typeRecipe";
 type recipesGridProps = {
   recipes: typeRecipe[];
   isLoading: boolean;
+  isLoadingMore: boolean;
   showLoading: boolean;
   onClick: () => void;
   hasMore: boolean;
@@ -13,6 +14,7 @@ type recipesGridProps = {
 function RecipesGrid({
   recipes,
   isLoading,
+  isLoadingMore,
   showLoading,
   onClick,
   hasMore,
@@ -58,12 +60,13 @@ function RecipesGrid({
           ))}
         </div>
       )}
-      {recipes.length > 0 && hasMore && !isLoading ? (
+      {recipes.length > 0 && hasMore ? (
         <button
           onClick={onClick}
-          className="mx-auto mt-6 block w-36 rounded-xl bg-primary text-sm text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring py-3"
+          disabled={isLoadingMore}
+          className="mx-auto mt-6 block w-36 rounded-xl bg-primary text-sm text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring py-3 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Mostrar mais
+          {isLoadingMore ? "Carregando..." : "Mostrar mais"}
         </button>
       ) : null}
     </section>

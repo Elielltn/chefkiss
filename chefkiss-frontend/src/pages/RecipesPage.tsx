@@ -24,6 +24,7 @@ function RecipesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [recipes, setRecipes] = useState<typeRecipe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -41,7 +42,14 @@ function RecipesPage() {
   );
 
   const fetchRecipes = useCallback(async () => {
-    setIsLoading(true);
+    const isFirstPage = page === 1;
+
+    if (isFirstPage) {
+      setIsLoading(true);
+    } else {
+      setIsLoadingMore(true);
+    }
+
     setUnauthorized(false);
     setShowLoading(false);
 
@@ -53,6 +61,7 @@ function RecipesPage() {
     if (!token) {
       setUnauthorized(true);
       setIsLoading(false);
+      setIsLoadingMore(false);
       clearTimeout(loadingTimer);
       return;
     }
@@ -69,6 +78,7 @@ function RecipesPage() {
     if (response.status === 401) {
       setUnauthorized(true);
       setIsLoading(false);
+      setIsLoadingMore(false);
       clearTimeout(loadingTimer);
       return;
     }
@@ -82,9 +92,10 @@ function RecipesPage() {
     }
 
     const data = await response.json();
-    setRecipes((prev) => (page === 1 ? data.data : [...prev, ...data.data]));
+    setRecipes((prev) => (isFirstPage ? data.data : [...prev, ...data.data]));
     setHasMore(data.pagination.page < data.pagination.totalPages);
     setIsLoading(false);
+    setIsLoadingMore(false);
   }, [query, page]);
 
   useEffect(() => {
@@ -102,6 +113,7 @@ function RecipesPage() {
         <RecipesGrid
           recipes={recipes}
           isLoading={isLoading}
+          isLoadingMore={isLoadingMore}
           showLoading={showLoading}
           onClick={() => setPage((p) => p + 1)}
           hasMore={hasMore}
