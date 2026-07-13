@@ -4,6 +4,7 @@ import type { typeRecipe } from "../types/typeRecipe";
 type recipesGridProps = {
   recipes: typeRecipe[];
   isLoading: boolean;
+  showLoading: boolean;
   onClick: () => void;
   hasMore: boolean;
   unauthorized: boolean;
@@ -12,6 +13,7 @@ type recipesGridProps = {
 function RecipesGrid({
   recipes,
   isLoading,
+  showLoading,
   onClick,
   hasMore,
   unauthorized,
@@ -21,12 +23,14 @@ function RecipesGrid({
       aria-label="Lista de receitas"
       className="mt-6 rounded-2xl border border-border bg-surface-2/60 p-5 shadow-soft"
     >
-      {isLoading ? (
+      {showLoading && isLoading ? (
         <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
           <p className="font-display text-xl text-foreground">
             Aguarde enquanto buscamos suas receitas...
           </p>
         </div>
+      ) : isLoading ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-16 text-center"></div>
       ) : unauthorized ? (
         <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
           <p className="font-display text-xl text-foreground">
@@ -54,7 +58,7 @@ function RecipesGrid({
           ))}
         </div>
       )}
-      {recipes.length > 0 && hasMore ? (
+      {recipes.length > 0 && hasMore && !isLoading ? (
         <button
           onClick={onClick}
           className="mx-auto mt-6 block w-36 rounded-xl bg-primary text-sm text-primary-foreground shadow-soft transition-all hover:bg-primary-hover hover:shadow-elevated focus-visible:focus-ring py-3"

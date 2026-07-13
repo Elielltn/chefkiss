@@ -21,7 +21,7 @@ function RecipeDetailsPage() {
   const [data, setData] = useState<typeRecipeDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
@@ -63,7 +63,7 @@ function RecipeDetailsPage() {
 
       const token = localStorage.getItem("token");
       if (!token) {
-        console.log("Faça login para ver detalhes das suas receitas");
+        setError("Faça login para ver detalhes das suas receitas");
         clearTimeout(loadingTimer);
         return;
       }
@@ -75,7 +75,7 @@ function RecipeDetailsPage() {
       clearTimeout(loadingTimer);
 
       if (!response.ok) {
-        setError(true);
+        setError("Receita não encontrada.");
         setIsLoading(false);
         return;
       }
@@ -122,7 +122,7 @@ function RecipeDetailsPage() {
         <div className="flex flex-col items-center gap-1.5">
           <Logo fontSize={42} />
           <div className="flex flex-col items-center gap-1.5">
-            <p>Receita não encontrada.</p>
+            <p>{error}</p>
             <button
               onClick={() => navigate("/recipes")}
               className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-medium text-foreground shadow-soft transition-colors hover:bg-secondary hover:border-border-strong focus-visible:focus-ring"

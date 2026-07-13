@@ -24,6 +24,7 @@ function RecipesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [recipes, setRecipes] = useState<typeRecipe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showLoading, setShowLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
@@ -42,11 +43,17 @@ function RecipesPage() {
   const fetchRecipes = useCallback(async () => {
     setIsLoading(true);
     setUnauthorized(false);
+    setShowLoading(false);
+
+    const loadingTimer = setTimeout(() => {
+      setShowLoading(true);
+    }, 400);
 
     const token = localStorage.getItem("token");
     if (!token) {
       setUnauthorized(true);
       setIsLoading(false);
+      clearTimeout(loadingTimer);
       return;
     }
 
@@ -62,8 +69,11 @@ function RecipesPage() {
     if (response.status === 401) {
       setUnauthorized(true);
       setIsLoading(false);
+      clearTimeout(loadingTimer);
       return;
     }
+
+    clearTimeout(loadingTimer);
 
     if (!response.ok) {
       console.log("Erro ao buscar suas receitas");
@@ -92,6 +102,7 @@ function RecipesPage() {
         <RecipesGrid
           recipes={recipes}
           isLoading={isLoading}
+          showLoading={showLoading}
           onClick={() => setPage((p) => p + 1)}
           hasMore={hasMore}
           unauthorized={unauthorized}
