@@ -7,7 +7,6 @@ import {
   recipeIdSchema,
   updateRecipeSchema,
 } from "../schemas/recipeSchemas.js";
-import { error } from "node:console";
 
 export async function createRecipe(req: AuthRequest, res: Response) {
   const result = createRecipeSchema.safeParse(req.body);
