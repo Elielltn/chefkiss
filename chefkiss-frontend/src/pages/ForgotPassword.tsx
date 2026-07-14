@@ -1,11 +1,13 @@
-import { ChefHat, CheckCircle2, ArrowLeft } from "lucide-react";
+import { ChefHat, CheckCircle2, ArrowLeft, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
-  function submit(e: React.SubmitEvent) {
+
+  async function submit(e: React.SubmitEvent) {
+    setError("");
     e.preventDefault();
 
     if (!email) {
@@ -13,9 +15,17 @@ function ForgotPassword() {
       return;
     }
 
-    //Todo: Lógica do envio de email.
+    try {
+      await fetch("http://localhost:3000/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+    } catch (error) {
+      setError("Não foi possível enviar o e-mail. Verifique sua conexão.");
+    }
 
-    setSent(true)
+    setSent(true);
   }
 
   return (
@@ -69,9 +79,14 @@ function ForgotPassword() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="seu@email.com"
                   autoComplete="email"
-                  required
-                  className="h-11 w-full rounded-lg border border-border bg-surface px-3.5 text-sm text-foreground placeholder:text-muted-foreground/70 transition-colors focus:outline-none focus:border-accent focus:ring-3 focus:ring-accent/25"
+                  className="mb-3 h-11 w-full rounded-lg border border-border bg-surface px-3.5 text-sm text-foreground placeholder:text-muted-foreground/70 transition-colors focus:outline-none focus:border-accent focus:ring-3 focus:ring-accent/25"
                 />
+
+                {error ? (
+                  <span className="flex gap-1 items-center mb-3 text-sm text-destructive">
+                    <TriangleAlert className="size-5" /> {error}
+                  </span>
+                ) : null}
               </div>
 
               <button
