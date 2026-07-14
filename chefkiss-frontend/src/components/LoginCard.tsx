@@ -106,14 +106,26 @@ function LoginCard() {
           value={email}
           onChange={setEmail}
         />
-        <FormField
-          id="password"
-          label="Senha"
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={setPassword}
-        />
+        <div>
+          <FormField
+            id="password"
+            label="Senha"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={setPassword}
+          />
+          {!isSignup && (
+            <div className="mt-2 text-right">
+              <span
+                onClick={() => navigate("/forgot-password")}
+                className="text-xs font-medium text-primary underline-offset-2 hover:underline"
+              >
+                Esqueceu a senha?
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {error ? (
