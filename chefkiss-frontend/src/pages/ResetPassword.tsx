@@ -24,7 +24,7 @@ function ResetPassword() {
       setError("A senha deve ter pelo menos 6 caracteres.");
       return;
     }
-    
+
     if (password !== confirm) {
       setError("As senhas não coincidem.");
       return;
@@ -33,7 +33,7 @@ function ResetPassword() {
     const response = await fetch("http://localhost:3000/auth/reset-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, confirm }),
+      body: JSON.stringify({ token, newPassword: password }),
     });
 
     if (!response.ok) {
