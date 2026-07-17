@@ -10,6 +10,7 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
 } from "../schemas/authSchemas.js";
+import type { AuthRequest } from "../middlewares/authMiddleware.js";
 
 export async function register(req: Request, res: Response) {
   const result = registerSchema.safeParse(req.body);
@@ -37,7 +38,14 @@ export async function register(req: Request, res: Response) {
     { expiresIn: "7d" },
   );
 
-  return res.status(201).json({ id: user.id, email: user.email, token });
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  });
+
+  return res.status(201).json({ message: "Conta criada com sucesso." });
 }
 
 export async function login(req: Request, res: Response) {
@@ -65,7 +73,31 @@ export async function login(req: Request, res: Response) {
     { expiresIn: "7d" },
   );
 
-  return res.status(200).json({ token });
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  });
+
+  return res.status(200).json({ message: "Login realizado com sucesso." });
+}
+
+export async function me(req: AuthRequest, res: Response) {
+  if (!req.userId) {
+    return res.status(401).json({ error: "Não autenticado." });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: req.userId },
+    select: { id: true, email: true },
+  });
+  return res.status(200).json(user);
+}
+
+export function logout(req: Request, res: Response) {
+  res.clearCookie("token");
+  return res.status(200).json({ message: "Logout realizado." });
 }
 
 export async function forgotPassword(req: Request, res: Response) {
