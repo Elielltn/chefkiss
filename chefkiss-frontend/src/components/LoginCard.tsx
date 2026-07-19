@@ -38,6 +38,7 @@ function LoginCard() {
     const response = await fetch("http://localhost:3000/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ email, password }),
     });
 
@@ -46,8 +47,6 @@ function LoginCard() {
       return;
     }
 
-    const data = await response.json();
-    localStorage.setItem("token", data.token);
     navigate("/recipes");
   }
 
@@ -57,6 +56,7 @@ function LoginCard() {
     const response = await fetch("http://localhost:3000/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ email, password }),
     });
 
@@ -65,8 +65,6 @@ function LoginCard() {
       return;
     }
 
-    const data = await response.json();
-    localStorage.setItem("token", data.token);
     navigate("/recipes");
   }
 

@@ -46,18 +46,11 @@ function AddRecipeModal({
 
   async function handleCreateRecipe() {
     setErrorMessage(null);
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setErrorMessage("Faça login para criar receitas.");
-      return;
-    }
 
     const response = await fetch("http://localhost:3000/recipes", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         name: recipeName,
         categories: recipeCats,
@@ -66,6 +59,11 @@ function AddRecipeModal({
         tips: recipeTips.filter((t) => t.trim() !== ""),
       }),
     });
+
+    if (response.status === 401) {
+      setErrorMessage("Faça login para criar receitas.");
+      return;
+    }
 
     if (!response.ok) {
       setErrorMessage("Erro ao adicionar receita. Verifique os campos.");
@@ -79,18 +77,13 @@ function AddRecipeModal({
   async function handleUpdateRecipe() {
     setErrorMessage(null);
     setIsUpdating(true);
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setIsUpdating(false);
-      return setErrorMessage("Faça login para atualizar a receita");
-    }
 
     const response = await fetch(`http://localhost:3000/recipes/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
+      credentials: "include",
       body: JSON.stringify({
         name: recipeName,
         categories: recipeCats,
@@ -99,6 +92,11 @@ function AddRecipeModal({
         tips: recipeTips.filter((t) => t.trim() !== ""),
       }),
     });
+
+    if (response.status === 401) {
+      setErrorMessage("Faça login para criar receitas.");
+      return;
+    }
 
     if (!response.ok) {
       setIsUpdating(false);

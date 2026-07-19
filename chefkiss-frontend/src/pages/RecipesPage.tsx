@@ -41,66 +41,71 @@ function RecipesPage() {
     [],
   );
 
-  const fetchRecipes = useCallback(async () => {
-    const isFirstPage = page === 1;
+  const fetchRecipes = useCallback(
+    async (targetPage: number, replace: boolean) => {
+      if (replace) {
+        setIsLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
 
-    if (isFirstPage) {
-      setIsLoading(true);
-    } else {
-      setIsLoadingMore(true);
-    }
+      setUnauthorized(false);
+      setShowLoading(false);
 
-    setUnauthorized(false);
-    setShowLoading(false);
+      const loadingTimer = setTimeout(() => {
+        setShowLoading(true);
+      }, 400);
 
-    const loadingTimer = setTimeout(() => {
-      setShowLoading(true);
-    }, 400);
+      const params = new URLSearchParams();
+      if (query) params.append("search", query);
+      params.append("page", `${targetPage}`);
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setUnauthorized(true);
+      const response = await fetch(
+        `http://localhost:3000/recipes?${params.toString()}`,
+        { credentials: "include" },
+      );
+
+      if (response.status === 401) {
+        setUnauthorized(true);
+        setIsLoading(false);
+        setIsLoadingMore(false);
+        clearTimeout(loadingTimer);
+        return;
+      }
+
+      clearTimeout(loadingTimer);
+
+      if (!response.ok) {
+        console.log("Erro ao buscar suas receitas");
+        setIsLoading(false);
+        setIsLoadingMore(false);
+        return;
+      }
+
+      const data = await response.json();
+      setRecipes((prev) => (replace ? data.data : [...prev, ...data.data]));
+      setHasMore(data.pagination.page < data.pagination.totalPages);
       setIsLoading(false);
       setIsLoadingMore(false);
-      clearTimeout(loadingTimer);
-      return;
-    }
-
-    const params = new URLSearchParams();
-    if (query) params.append("search", query);
-    params.append("page", `${page}`);
-
-    const response = await fetch(
-      `http://localhost:3000/recipes?${params.toString()}`,
-      { headers: { Authorization: `Bearer ${token}` } },
-    );
-
-    if (response.status === 401) {
-      setUnauthorized(true);
-      setIsLoading(false);
-      setIsLoadingMore(false);
-      clearTimeout(loadingTimer);
-      return;
-    }
-
-    clearTimeout(loadingTimer);
-
-    if (!response.ok) {
-      console.log("Erro ao buscar suas receitas");
-      setIsLoading(false);
-      return;
-    }
-
-    const data = await response.json();
-    setRecipes((prev) => (isFirstPage ? data.data : [...prev, ...data.data]));
-    setHasMore(data.pagination.page < data.pagination.totalPages);
-    setIsLoading(false);
-    setIsLoadingMore(false);
-  }, [query, page]);
+    },
+    [query],
+  );
 
   useEffect(() => {
-    fetchRecipes();
-  }, [fetchRecipes]);
+    setPage(1);
+    fetchRecipes(1, true);
+  }, [query]);
+
+  function handleLoadMore() {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchRecipes(nextPage, false);
+  }
+
+  function refreshRecipes() {
+    setPage(1);
+    fetchRecipes(1, true);
+  }
 
   return (
     <main className="min-h-dvh">
@@ -115,7 +120,7 @@ function RecipesPage() {
           isLoading={isLoading}
           isLoadingMore={isLoadingMore}
           showLoading={showLoading}
-          onClick={() => setPage((p) => p + 1)}
+          onClick={handleLoadMore}
           hasMore={hasMore}
           unauthorized={unauthorized}
         ></RecipesGrid>
@@ -123,7 +128,7 @@ function RecipesPage() {
       {isModalOpen && (
         <AddRecipeModal
           onClose={() => setIsModalOpen(false)}
-          onSuccess={fetchRecipes}
+          onSuccess={refreshRecipes}
         />
       )}
     </main>

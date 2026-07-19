@@ -43,6 +43,7 @@ export async function register(req: Request, res: Response) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 1000 * 60 * 60 * 24 * 7,
+    path: "/",
   });
 
   return res.status(201).json({ message: "Conta criada com sucesso." });
@@ -78,6 +79,7 @@ export async function login(req: Request, res: Response) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 1000 * 60 * 60 * 24 * 7,
+    path: "/",
   });
 
   return res.status(200).json({ message: "Login realizado com sucesso." });
@@ -96,7 +98,7 @@ export async function me(req: AuthRequest, res: Response) {
 }
 
 export function logout(req: Request, res: Response) {
-  res.clearCookie("token");
+  res.clearCookie("token", { path: "/" });
   return res.status(200).json({ message: "Logout realizado." });
 }
 

@@ -30,18 +30,17 @@ function RecipeDetailsPage() {
   async function handleDelete() {
     setIsDeleting(true);
     setDeleteError(null);
-    const token = localStorage.getItem("token");
 
-    if (!token) {
+    const result = await fetch(`http://localhost:3000/recipes/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (result.status === 401) {
       setDeleteError("Você precisa estar logado para excluir uma receita");
       setIsDeleting(false);
       return;
     }
-
-    const result = await fetch(`http://localhost:3000/recipes/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
 
     if (!result.ok) {
       setDeleteError("Ocorreu um erro ao excluir a receita.");
@@ -53,40 +52,40 @@ function RecipeDetailsPage() {
   }
 
   const fetchRecipeDetails = useCallback(
-    async function fetchRecipeDetails() {
-      setIsLoading(true);
-      setShowLoading(false);
+  async function fetchRecipeDetails() {
+    setIsLoading(true);
+    setShowLoading(false);
+    setError("");
 
-      const loadingTimer = setTimeout(() => {
-        setShowLoading(true);
-      }, 400);
+    const loadingTimer = setTimeout(() => {
+      setShowLoading(true);
+    }, 400);
 
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("Faça login para ver detalhes das suas receitas");
-        clearTimeout(loadingTimer);
-        return;
-      }
+    const response = await fetch(`http://localhost:3000/recipes/${id}`, {
+      credentials: "include",
+    });
 
-      const response = await fetch(`http://localhost:3000/recipes/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    clearTimeout(loadingTimer);
 
-      clearTimeout(loadingTimer);
-
-      if (!response.ok) {
-        setError("Receita não encontrada.");
-        setIsLoading(false);
-        return;
-      }
-
-      const data = await response.json();
-
-      setData(data);
+    if (response.status === 401) {
+      setError("Faça login para ver detalhes das suas receitas.");
       setIsLoading(false);
-    },
-    [id],
-  );
+      return;
+    }
+
+    if (!response.ok) {
+      setError("Receita não encontrada.");
+      setIsLoading(false);
+      return;
+    }
+
+    const data = await response.json();
+
+    setData(data);
+    setIsLoading(false);
+  },
+  [id],
+);
 
   useEffect(() => {
     fetchRecipeDetails();
