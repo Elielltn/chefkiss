@@ -1,75 +1,103 @@
-# ChefKiss — API
+# 🍳 ChefKiss API
 
-API REST para o ChefKiss, aplicação de gerenciamento pessoal de receitas culinárias.
+API REST do **ChefKiss**, uma aplicação para gerenciamento pessoal de receitas culinárias.
 
-## Tecnologias
+## 🚀 Tecnologias
 
-- Node.js + Express
+- Node.js
+- Express
 - TypeScript
-- PostgreSQL + Prisma ORM
-- Autenticação via JWT (cookies httpOnly)
-- Validação com Zod
-- Envio de e-mail via Resend
+- PostgreSQL
+- Prisma ORM
+- JWT (autenticação via cookies HttpOnly)
+- Zod
+- Resend
 
-## Funcionalidades
+---
 
-- Registro e login de usuários
-- Recuperação de senha por e-mail
-- CRUD completo de receitas (ingredientes, passos e dicas)
-- Paginação, busca por nome e filtro por categoria
-- Isolamento de dados por usuário
+## ✨ Funcionalidades
 
-## Rodando localmente
+- ✅ Registro de usuários
+- ✅ Login autenticado com JWT
+- ✅ Recuperação de senha por e-mail
+- ✅ CRUD completo de receitas
+  - Ingredientes
+  - Passos
+  - Dicas
+- ✅ Busca por nome
+- ✅ Filtro por categoria
+- ✅ Paginação
+- ✅ Isolamento dos dados por usuário
 
-### Pré-requisitos
-- Node.js 18+
-- PostgreSQL (local via Docker, ou um serviço na nuvem)
+---
 
-### Instalação
+# ⚙️ Rodando localmente
 
-\`\`\`bash
+## Pré-requisitos
+
+- Node.js 18 ou superior
+- PostgreSQL (local via Docker ou serviço em nuvem)
+
+## Instalação
+
+```bash
 git clone https://github.com/Elielltn/chefkiss.git
 cd chefkiss-backend
 npm install
-\`\`\`
+```
 
-### Variáveis de ambiente
+---
 
-Crie um arquivo \`.env\` na raiz:
+## Variáveis de ambiente
 
-\`\`\`
+Crie um arquivo `.env` na raiz do projeto.
+
+```env
 DATABASE_URL="postgresql://usuario:senha@localhost:5432/chefkiss"
 JWT_SECRET="sua-chave-secreta"
 RESEND_API_KEY="sua-chave-do-resend"
 FRONTEND_URL="http://localhost:5173"
-\`\`\`
+```
 
-### Banco de dados
+---
 
-\`\`\`bash
+## Banco de dados
+
+Execute as migrations e gere o cliente do Prisma.
+
+```bash
 npx prisma migrate deploy
 npx prisma generate
-\`\`\`
+```
 
-### Rodando o servidor
+---
 
-\`\`\`bash
+## Iniciando o servidor
+
+```bash
 npm run dev
-\`\`\`
+```
 
-O servidor sobe em \`http://localhost:3000\`.
+A API estará disponível em:
 
-## Estrutura do projeto
+```
+http://localhost:3000
+```
 
-\`\`\`
+---
+
+# 📁 Estrutura do projeto
+
+```text
 src/
-├── controllers/    # Lógica de negócio de cada rota
-├── middlewares/    # Autenticação e validações intermediárias
-├── routes/         # Definição de endpoints
-├── schemas/        # Validação de dados com Zod
-├── lib/            # Configurações (Prisma e e-mail)
-└── server.ts       # Ponto de entrada da aplicação
+├── controllers/    # Lógica das rotas
+├── middlewares/    # Autenticação e validações
+├── routes/         # Endpoints
+├── schemas/        # Validações com Zod
+├── lib/            # Prisma e Resend
+└── server.ts       # Entrada da aplicação
+
 prisma/
-├── schema.prisma   # Modelagem do banco de dados
-└── migrations/     # Histórico de migrations
-\`\`\`
+├── schema.prisma   # Modelo do banco
+└── migrations/     # Histórico das migrations
+```
