@@ -30,11 +30,14 @@ function ResetPassword() {
       return;
     }
 
-    const response = await fetch("http://localhost:3000/auth/reset-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, newPassword: password }),
-    });
+    const response = await fetch(
+      "https://chefkiss-sandy.vercel.app/auth/reset-password",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, newPassword: password }),
+      },
+    );
 
     if (!response.ok) {
       setError("Link inválido ou expirado.");

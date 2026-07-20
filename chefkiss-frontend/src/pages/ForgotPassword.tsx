@@ -16,7 +16,7 @@ function ForgotPassword() {
     }
 
     try {
-      await fetch("http://localhost:3000/auth/forgot-password", {
+      await fetch("https://chefkiss-sandy.vercel.app/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

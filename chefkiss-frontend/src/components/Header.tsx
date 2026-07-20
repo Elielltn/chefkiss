@@ -6,7 +6,7 @@ function Header() {
   const navigate = useNavigate();
 
   async function handleLogout() {
-    await fetch("http://localhost:3000/auth/logout", {
+    await fetch("https://chefkiss-sandy.vercel.app/auth/logout", {
       method: "POST",
       credentials: "include",
     });

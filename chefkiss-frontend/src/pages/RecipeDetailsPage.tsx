@@ -31,10 +31,13 @@ function RecipeDetailsPage() {
     setIsDeleting(true);
     setDeleteError(null);
 
-    const result = await fetch(`http://localhost:3000/recipes/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+    const result = await fetch(
+      `https://chefkiss-sandy.vercel.app/recipes/${id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      },
+    );
 
     if (result.status === 401) {
       setDeleteError("Você precisa estar logado para excluir uma receita");
@@ -52,40 +55,43 @@ function RecipeDetailsPage() {
   }
 
   const fetchRecipeDetails = useCallback(
-  async function fetchRecipeDetails() {
-    setIsLoading(true);
-    setShowLoading(false);
-    setError("");
+    async function fetchRecipeDetails() {
+      setIsLoading(true);
+      setShowLoading(false);
+      setError("");
 
-    const loadingTimer = setTimeout(() => {
-      setShowLoading(true);
-    }, 400);
+      const loadingTimer = setTimeout(() => {
+        setShowLoading(true);
+      }, 400);
 
-    const response = await fetch(`http://localhost:3000/recipes/${id}`, {
-      credentials: "include",
-    });
+      const response = await fetch(
+        `https://chefkiss-sandy.vercel.app/recipes/${id}`,
+        {
+          credentials: "include",
+        },
+      );
 
-    clearTimeout(loadingTimer);
+      clearTimeout(loadingTimer);
 
-    if (response.status === 401) {
-      setError("Faça login para ver detalhes das suas receitas.");
+      if (response.status === 401) {
+        setError("Faça login para ver detalhes das suas receitas.");
+        setIsLoading(false);
+        return;
+      }
+
+      if (!response.ok) {
+        setError("Receita não encontrada.");
+        setIsLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+
+      setData(data);
       setIsLoading(false);
-      return;
-    }
-
-    if (!response.ok) {
-      setError("Receita não encontrada.");
-      setIsLoading(false);
-      return;
-    }
-
-    const data = await response.json();
-
-    setData(data);
-    setIsLoading(false);
-  },
-  [id],
-);
+    },
+    [id],
+  );
 
   useEffect(() => {
     fetchRecipeDetails();

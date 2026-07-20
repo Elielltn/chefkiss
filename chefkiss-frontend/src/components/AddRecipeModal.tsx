@@ -47,7 +47,7 @@ function AddRecipeModal({
   async function handleCreateRecipe() {
     setErrorMessage(null);
 
-    const response = await fetch("http://localhost:3000/recipes", {
+    const response = await fetch("https://chefkiss-sandy.vercel.app/recipes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -78,20 +78,23 @@ function AddRecipeModal({
     setErrorMessage(null);
     setIsUpdating(true);
 
-    const response = await fetch(`http://localhost:3000/recipes/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `https://chefkiss-sandy.vercel.app/recipes/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          name: recipeName,
+          categories: recipeCats,
+          ingredients: recipeIngs.filter((ing) => ing.name.trim() !== ""),
+          steps: recipeSteps.filter((s) => s.trim() !== ""),
+          tips: recipeTips.filter((t) => t.trim() !== ""),
+        }),
       },
-      credentials: "include",
-      body: JSON.stringify({
-        name: recipeName,
-        categories: recipeCats,
-        ingredients: recipeIngs.filter((ing) => ing.name.trim() !== ""),
-        steps: recipeSteps.filter((s) => s.trim() !== ""),
-        tips: recipeTips.filter((t) => t.trim() !== ""),
-      }),
-    });
+    );
 
     if (response.status === 401) {
       setErrorMessage("Faça login para criar receitas.");

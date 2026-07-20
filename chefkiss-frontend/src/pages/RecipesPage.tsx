@@ -61,7 +61,7 @@ function RecipesPage() {
       params.append("page", `${targetPage}`);
 
       const response = await fetch(
-        `http://localhost:3000/recipes?${params.toString()}`,
+        `https://chefkiss-sandy.vercel.app/recipes?${params.toString()}`,
         { credentials: "include" },
       );
 
