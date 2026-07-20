@@ -119,6 +119,11 @@ export async function forgotPassword(req: Request, res: Response) {
       .json({ message: "Se o e-mail existir, um link será enviado." });
   }
 
+  await prisma.passwordResetToken.updateMany({
+    where: { userId: user.id, used: false },
+    data: { used: true },
+  });
+
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60);
 
