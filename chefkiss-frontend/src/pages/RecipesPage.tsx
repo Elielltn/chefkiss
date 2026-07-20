@@ -61,7 +61,7 @@ function RecipesPage() {
       params.append("page", `${targetPage}`);
 
       const response = await fetch(
-        `https://chefkiss-sandy.vercel.app/recipes?${params.toString()}`,
+        `https://chefkiss.onrender.com/recipes?${params.toString()}`,
         { credentials: "include" },
       );
 

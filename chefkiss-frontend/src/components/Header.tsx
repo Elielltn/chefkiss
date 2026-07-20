@@ -6,7 +6,7 @@ function Header() {
   const navigate = useNavigate();
 
   async function handleLogout() {
-    await fetch("https://chefkiss-sandy.vercel.app/auth/logout", {
+    await fetch("https://chefkiss.onrender.com/auth/logout", {
       method: "POST",
       credentials: "include",
     });

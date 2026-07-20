@@ -31,7 +31,7 @@ function ResetPassword() {
     }
 
     const response = await fetch(
-      "https://chefkiss-sandy.vercel.app/auth/reset-password",
+      "https://chefkiss.onrender.com/auth/reset-password",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

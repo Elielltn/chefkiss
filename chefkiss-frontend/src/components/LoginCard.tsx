@@ -35,15 +35,12 @@ function LoginCard() {
     e.preventDefault();
     setError("");
 
-    const response = await fetch(
-      "https://chefkiss-sandy.vercel.app/auth/login",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      },
-    );
+    const response = await fetch("https://chefkiss.onrender.com/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email, password }),
+    });
 
     if (!response.ok) {
       setError(await getErrorMessage(response));
@@ -57,7 +54,7 @@ function LoginCard() {
     e.preventDefault();
     setError("");
     const response = await fetch(
-      "https://chefkiss-sandy.vercel.app/auth/register",
+      "https://chefkiss.onrender.com/auth/register",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

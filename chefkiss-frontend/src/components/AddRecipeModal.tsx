@@ -47,7 +47,7 @@ function AddRecipeModal({
   async function handleCreateRecipe() {
     setErrorMessage(null);
 
-    const response = await fetch("https://chefkiss-sandy.vercel.app/recipes", {
+    const response = await fetch("https://chefkiss.onrender.com/recipes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -79,7 +79,7 @@ function AddRecipeModal({
     setIsUpdating(true);
 
     const response = await fetch(
-      `https://chefkiss-sandy.vercel.app/recipes/${id}`,
+      `https://chefkiss.onrender.com/recipes/${id}`,
       {
         method: "PUT",
         headers: {

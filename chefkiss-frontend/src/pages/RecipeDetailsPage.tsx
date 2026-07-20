@@ -31,13 +31,10 @@ function RecipeDetailsPage() {
     setIsDeleting(true);
     setDeleteError(null);
 
-    const result = await fetch(
-      `https://chefkiss-sandy.vercel.app/recipes/${id}`,
-      {
-        method: "DELETE",
-        credentials: "include",
-      },
-    );
+    const result = await fetch(`https://chefkiss.onrender.com/recipes/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
 
     if (result.status === 401) {
       setDeleteError("Você precisa estar logado para excluir uma receita");
@@ -65,7 +62,7 @@ function RecipeDetailsPage() {
       }, 400);
 
       const response = await fetch(
-        `https://chefkiss-sandy.vercel.app/recipes/${id}`,
+        `https://chefkiss.onrender.com/recipes/${id}`,
         {
           credentials: "include",
         },

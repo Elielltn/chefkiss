@@ -16,7 +16,7 @@ function ForgotPassword() {
     }
 
     try {
-      await fetch("https://chefkiss-sandy.vercel.app/auth/forgot-password", {
+      await fetch("https://chefkiss.onrender.com/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
